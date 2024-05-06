@@ -2,7 +2,7 @@
 import sys
 import psutil
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import QTimer
 from menu_section import MenuSection
 from home_section import HomeSection
 from cpu_section import CPUSection
@@ -40,7 +40,6 @@ class SystemMonitorDashboard(QWidget):
         self.menu_section.signals.disk_item_clicked.connect(self.show_disk_section)
         self.menu_section.signals.processes_item_clicked.connect(self.show_processes_section)
         self.menu_section.signals.network_item_clicked.connect(self.show_network_section)
-        self.menu_section.signals.cpu_item_clicked.connect(self.show_home_section)
 
         # Add the menu section to the main layout
         main_layout.addWidget(self.menu_section, 1)
@@ -61,7 +60,7 @@ class SystemMonitorDashboard(QWidget):
         self.timer.start(1000)
 
     def update_metrics(self):
-        """Update CPU, memory, disk, process, and overall information."""
+        """Update CPU, memory, disk, and process information."""
         # CPU
         cpu_percent = psutil.cpu_percent(interval=0.1)
         self.cpu_data = self.cpu_data[1:] + [cpu_percent]
@@ -87,20 +86,10 @@ class SystemMonitorDashboard(QWidget):
         self.network_data = self.network_data[1:] + [50]  # Replace with actual network data
         self.network_section.update_network(self.network_data)
 
-        # Update overall system info in Home section
-        avg_cpu = sum(self.cpu_data) // len(self.cpu_data)
-        avg_memory = sum(self.memory_data) // len(self.memory_data)
-        self.home_section.update_overall_info(avg_cpu, avg_memory, disk_usage, process_count)
-
     def clear_content_layout(self):
         """Clear the current content layout."""
         for i in reversed(range(self.content_layout.count())):
             self.content_layout.itemAt(i).widget().setParent(None)
-
-    def show_home_section(self):
-        """Show the Home section."""
-        self.clear_content_layout()
-        self.content_layout.addWidget(self.home_section)
 
     def show_cpu_section(self):
         """Show the CPU section."""
