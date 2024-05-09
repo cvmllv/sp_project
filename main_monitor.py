@@ -1,6 +1,6 @@
 import sys
 import psutil
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QCheckBox
 from PyQt5.QtCore import QTimer
 from cpu_section import CPUSection
 from memory_section import MemorySection
@@ -28,10 +28,15 @@ class SystemMonitorDashboard(QWidget):
         main_layout.addWidget(section_label)
         main_layout.addWidget(self.section_combobox)
 
-        # Button to display summary of all sections
+        # Button to display the summary of all sections
         self.summary_button = QPushButton("Show Summary of All Sections")
         self.summary_button.clicked.connect(self.show_summary)
         main_layout.addWidget(self.summary_button)
+
+        # Checkbox for dark theme
+        self.dark_theme_checkbox = QCheckBox("Dark Theme")
+        self.dark_theme_checkbox.stateChanged.connect(self.toggle_theme)
+        main_layout.addWidget(self.dark_theme_checkbox)
 
         # Content Layout (Dynamic sections)
         self.content_layout = QVBoxLayout()
@@ -139,6 +144,26 @@ class SystemMonitorDashboard(QWidget):
                 widget.setParent(None)
             else:
                 self.content_layout.itemAt(i).layout().deleteLater()
+
+    def toggle_theme(self):
+        """Toggle between light and dark themes based on the checkbox state."""
+        if self.dark_theme_checkbox.isChecked():
+            # Apply a dark theme
+            dark_theme = """
+            QWidget {
+                background-color: #2e2e2e;
+                color: #ffffff;
+            }
+            QPushButton, QLabel, QComboBox, QCheckBox {
+                background-color: #444444;
+                border: 1px solid #555555;
+                color: #ffffff;
+            }
+            """
+            self.setStyleSheet(dark_theme)
+        else:
+            # Reset to the default (light) theme
+            self.setStyleSheet("")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
