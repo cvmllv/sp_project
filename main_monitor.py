@@ -7,6 +7,7 @@ from memory_section import TopMemoryProcessesWidget
 from network_section import TopNetworkProcessesWidget, NetworkMonitorWidget
 from battery_section import BatteryGraphWidget
 from kill_process_section import KillerApp
+from toggle_switch import ThemeSwitch
 
 class RectanglePlaceholder(QLabel):
     """A QLabel subclass to mimic a rectangle placeholder."""
@@ -67,9 +68,6 @@ class ComplexUILayout(QWidget):
         cpu_rectangle = RectanglePlaceholder(self.width, 145 + self.height)
         
         cpu_label = QLabel("CPU Usage", cpu_rectangle)
-        cpu_label.setAlignment(Qt.AlignLeft)
-        cpu_label.setMargin(5)
-
         cpu_table = TopCPUProcessesWidget()
 
         #cpu_rectangle.inner_layout.addWidget(cpu_label)
@@ -85,7 +83,7 @@ class ComplexUILayout(QWidget):
 
         # Horizontal stack (right_stack_hbox) added to the second column
         right_stack_hbox = QHBoxLayout()
-        right_stack_hbox.addWidget(RectanglePlaceholder(220, 60 + self.height))
+        right_stack_hbox.addWidget(ThemeSwitch())
         right_stack_hbox.addWidget(RectanglePlaceholder(220, 60 + self.height))
 
         second_column.addLayout(right_stack_hbox)  # Add the horizontal layout to the second column

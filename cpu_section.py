@@ -6,8 +6,6 @@ from PyQt5.QtCore import QTimer, QSize
 class TopCPUProcessesWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Top 5 CPU Processes")
-        #self.setFixedSize(QSize(450, 200))
 
         # Layout and label
         layout = QVBoxLayout()
@@ -16,6 +14,7 @@ class TopCPUProcessesWidget(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["PID", "Name", "% CPU", "Threads"])
+        self.table.verticalHeader().setVisible(False)
         layout.addWidget(self.table)
 
         # Update the process table periodically
@@ -48,20 +47,14 @@ class TopCPUProcessesWidget(QWidget):
         # Populate the table with the top 5 processes
         for row, proc in enumerate(sorted_procs[:5]):
             try:
-                pid = proc.info['pid']
                 name = proc.info['name'] or "Unknown"
                 cpu_percent = proc.info['cpu_percent']
                 num_threads = proc.info['num_threads']
 
-                # Fill table cells
-                self.table.setItem(row, 0, QTableWidgetItem(str(pid)))
-                self.table.setItem(row, 1, QTableWidgetItem(name))
-                self.table.setItem(row, 2, QTableWidgetItem(f"{cpu_percent:.2f}"))
-                self.table.setItem(row, 3, QTableWidgetItem(str(num_threads)))
+                # Fill table cells starting from the first column
+                self.table.setItem(row, 0, QTableWidgetItem(name))
+                self.table.setItem(row, 1, QTableWidgetItem(f"{cpu_percent:.2f}"))
+                self.table.setItem(row, 2, QTableWidgetItem(str(num_threads)))
 
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
-
-
-
-

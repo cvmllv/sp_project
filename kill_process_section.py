@@ -3,6 +3,7 @@ import os
 import signal
 from PyQt5.QtWidgets import (QApplication, QWidget, QLineEdit, QPushButton, QVBoxLayout,
                              QHBoxLayout, QLabel, QSpacerItem, QSizePolicy)
+from PyQt5.QtCore import QSize, Qt
 
 class KillerApp(QWidget):
     def __init__(self):
@@ -15,13 +16,15 @@ class KillerApp(QWidget):
 
         # QLineEdit for PID input
         self.pidInput = QLineEdit(self)
+        self.pidInput.setFixedSize(400, 40)
         layout.addWidget(self.pidInput)
 
         # QPushButton to kill the process
         self.killButton = QPushButton('Kill Process', self)
         self.killButton.setFixedSize(150, 50)
         self.killButton.clicked.connect(self.killProcess)
-        layout.addWidget(self.killButton)
+
+        layout.addWidget(self.killButton, 0, Qt.AlignCenter)
 
         self.setLayout(layout)
         self.setWindowTitle('Process Killer')
