@@ -1,56 +1,67 @@
-# cpu_section.py
-from PyQt5.QtWidgets import QGroupBox, QVBoxLayout, QHBoxLayout, QLabel
-import pyqtgraph as pg
+import sys
+import psutil
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton, QHBoxLayout
+from PyQt5.QtCore import QTimer, QSize
 
-class CPUSection(QGroupBox):
-    def __init__(self, show_detailed=True):
-        super().__init__("CPU Usage")
+class TopCPUProcessesWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Top 5 CPU Processes")
+        #self.setFixedSize(QSize(450, 200))
+
+        # Layout and label
         layout = QVBoxLayout()
 
-        # CPU Usage graph
-        self.cpu_plot = pg.PlotWidget(title="CPU Usage (%)")
-        self.cpu_plot.setYRange(0, 100)
-        self.cpu_curve = self.cpu_plot.plot(pen=pg.mkPen('y', width=2))
-        self.cpu_data = [0] * 60  # Last 60 seconds for CPU usage
+        # Table Widget for displaying the process information
+        self.table = QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["PID", "Name", "% CPU", "Threads"])
+        layout.addWidget(self.table)
 
-        layout.addWidget(self.cpu_plot)
+        # Update the process table periodically
+        self.update_process_info()
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_process_info)
+        self.timer.start(2000)  # Update every 2 seconds
 
-        if show_detailed:
-            # Detailed information
-            self.logical_cores_label = QLabel("Logical Cores: 8")
-            self.physical_cores_label = QLabel("Physical Cores: 8")
-            self.cpu_freq_label = QLabel("Current Frequency: ")
-            self.cpu_stats_label = QLabel("CPU Stats: ")
+        self.setLayout(layout)
+        
+    def update_process_info(self):
+        """Update the table with the top 5 CPU processes."""
+        # Retrieve all processes with minimal necessary attributes
+        processes = [proc for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'num_threads'])]
 
-            # Add detailed information to the layout
-            details_layout = QVBoxLayout()
-            details_layout.addWidget(self.logical_cores_label)
-            details_layout.addWidget(self.physical_cores_label)
-            details_layout.addWidget(self.cpu_freq_label)
-            details_layout.addWidget(self.cpu_stats_label)
+        # Calculate the current CPU usage without delays
+        for proc in processes:
+            try:
+                # Retrieve the latest CPU percentage with no interval delay
+                proc.info['cpu_percent'] = proc.cpu_percent(interval=0.0)
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                proc.info['cpu_percent'] = 0.0
 
-            combined_layout = QHBoxLayout()
-            combined_layout.addLayout(layout)
-            combined_layout.addLayout(details_layout)
+        # Sort the processes by CPU percentage
+        sorted_procs = sorted(processes, key=lambda p: p.info['cpu_percent'], reverse=True)
 
-            self.setLayout(combined_layout)
-        else:
-            # Only graph layout
-            self.setLayout(layout)
+        # Clear the table and set the row count for the top 5 processes
+        self.table.setRowCount(min(len(sorted_procs), 5))
 
-    def update_cpu(self, data):
-        """Update the CPU graph data and optionally update the details."""
-        self.cpu_curve.setData(data)
+        # Populate the table with the top 5 processes
+        for row, proc in enumerate(sorted_procs[:5]):
+            try:
+                pid = proc.info['pid']
+                name = proc.info['name'] or "Unknown"
+                cpu_percent = proc.info['cpu_percent']
+                num_threads = proc.info['num_threads']
 
-        # Update detailed labels only if they're visible
-        try:
-            import psutil
-            cpu_info = psutil.cpu_freq()
-            self.cpu_freq_label.setText(f"Current Frequency: {cpu_info.current:.2f} MHz")
-            cpu_stats = psutil.cpu_stats()
-            self.cpu_stats_label.setText(
-                f"CPU Stats: ctx_switches={cpu_stats.ctx_switches}, "
-                f"interrupts={cpu_stats.interrupts}, soft_interrupts={cpu_stats.soft_interrupts}"
-            )
-        except AttributeError:
-            pass
+                # Fill table cells
+                self.table.setItem(row, 0, QTableWidgetItem(str(pid)))
+                self.table.setItem(row, 1, QTableWidgetItem(name))
+                self.table.setItem(row, 2, QTableWidgetItem(f"{cpu_percent:.2f}"))
+                self.table.setItem(row, 3, QTableWidgetItem(str(num_threads)))
+
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+
+
+
+

@@ -1,54 +1,71 @@
-# disk_section.py
-from PyQt5.QtWidgets import QGroupBox, QVBoxLayout, QHBoxLayout, QLabel
+import sys
 import psutil
-import pyqtgraph as pg
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem
+)
+from PyQt5.QtCore import QTimer, QSize
 
-class DiskSection(QGroupBox):
-    def __init__(self, show_detailed=True):
-        super().__init__("Disk Usage")
+
+class TopDiskProcessesWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Top 5 Disk I/O Processes")
+        self.setFixedSize(QSize(450, 200))
+
+        # Layout and Table Widget for displaying the process information
         layout = QVBoxLayout()
+        self.table = QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["PID", "Name", "Read (MB)", "Write (MB)"])
+        layout.addWidget(self.table)
 
-        # Disk Usage graph
-        self.disk_plot = pg.PlotWidget(title="Disk Usage (%)")
-        self.disk_plot.setYRange(0, 100)
-        self.disk_curve = self.disk_plot.plot(pen=pg.mkPen('r', width=2))
-        self.disk_data = [0] * 60  # Last 60 seconds of Disk usage
+        # Update the process table periodically
+        self.update_process_info()
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_process_info)
+        self.timer.start(2000)  # Update every 2 seconds
 
-        layout.addWidget(self.disk_plot)
+        self.setLayout(layout)
 
-        if show_detailed:
-            # Detailed information
-            disk_info = psutil.disk_usage('/')
-            self.total_disk_label = QLabel(f"Total Disk Space: {disk_info.total / (1024 ** 3):.2f} GB")
-            self.used_disk_label = QLabel("Used Disk Space: ")
-            self.free_disk_label = QLabel("Free Disk Space: ")
-            self.percent_disk_label = QLabel("Disk Usage Percentage: ")
+    def update_process_info(self):
+        """Update the table with the top 5 processes by disk I/O."""
+        def safe_get_disk_io(proc):
+            try:
+                io_counters = proc.info['io_counters']
+                return (io_counters.read_bytes, io_counters.write_bytes) if io_counters else (0, 0)
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                return (0, 0)
 
-            # Add detailed information to the layout
-            details_layout = QVBoxLayout()
-            details_layout.addWidget(self.total_disk_label)
-            details_layout.addWidget(self.used_disk_label)
-            details_layout.addWidget(self.free_disk_label)
-            details_layout.addWidget(self.percent_disk_label)
+        # Retrieve all processes with minimal necessary attributes
+        processes = [proc for proc in psutil.process_iter(['pid', 'name', 'io_counters'])]
 
-            combined_layout = QHBoxLayout()
-            combined_layout.addLayout(layout)
-            combined_layout.addLayout(details_layout)
+        # Sort processes by total disk I/O (read + write bytes)
+        sorted_procs = sorted(processes, key=lambda p: sum(safe_get_disk_io(p)), reverse=True)
 
-            self.setLayout(combined_layout)
-        else:
-            # Only graph layout
-            self.setLayout(layout)
+        # Clear the table and set the row count for the top 5 processes
+        self.table.setRowCount(min(len(sorted_procs), 5))
 
-    def update_disk(self, data):
-        """Update the Disk graph data and optionally update the details."""
-        self.disk_curve.setData(data)
+        # Populate the table with the top 5 disk I/O-consuming processes
+        for row, proc in enumerate(sorted_procs[:5]):
+            try:
+                pid = proc.info['pid']
+                name = proc.info['name'] or "Unknown"
+                read_bytes, write_bytes = safe_get_disk_io(proc)
+                read_mb = read_bytes / (1024 * 1024)
+                write_mb = write_bytes / (1024 * 1024)
 
-        # Update detailed labels only if they're visible
-        try:
-            disk_info = psutil.disk_usage('/')
-            self.used_disk_label.setText(f"Used Disk Space: {disk_info.used / (1024 ** 3):.2f} GB")
-            self.free_disk_label.setText(f"Free Disk Space: {disk_info.free / (1024 ** 3):.2f} GB")
-            self.percent_disk_label.setText(f"Disk Usage Percentage: {disk_info.percent:.2f}%")
-        except AttributeError:
-            pass
+                # Fill table cells
+                self.table.setItem(row, 0, QTableWidgetItem(str(pid)))
+                self.table.setItem(row, 1, QTableWidgetItem(name))
+                self.table.setItem(row, 2, QTableWidgetItem(f"{read_mb:.2f} MB"))
+                self.table.setItem(row, 3, QTableWidgetItem(f"{write_mb:.2f} MB"))
+
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = TopDiskProcessesWidget()
+    window.show()
+    sys.exit(app.exec_())

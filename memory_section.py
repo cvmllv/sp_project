@@ -1,54 +1,64 @@
-# memory_section.py
-from PyQt5.QtWidgets import QGroupBox, QVBoxLayout, QHBoxLayout, QLabel
+import sys
 import psutil
-import pyqtgraph as pg
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QSizePolicy
+)
+from PyQt5.QtCore import QTimer, QSize
 
-class MemorySection(QGroupBox):
-    def __init__(self, show_detailed=True):
-        super().__init__("Memory Usage")
+class TopMemoryProcessesWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Top 5 Memory Processes")
+        
+
+        # Layout and label
         layout = QVBoxLayout()
 
-        # Memory Usage graph
-        self.memory_plot = pg.PlotWidget(title="Memory Usage (%)")
-        self.memory_plot.setYRange(0, 100)
-        self.memory_curve = self.memory_plot.plot(pen=pg.mkPen('b', width=2))
-        self.memory_data = [0] * 60  # Last 60 seconds of Memory usage
+        # Table Widget for displaying the process information
+        self.table = QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["PID", "Name", "Memory %", "Memory (MB)"])
+        layout.addWidget(self.table)
 
-        layout.addWidget(self.memory_plot)
+        # Update the process table periodically
+        self.update_process_info()
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_process_info)
+        self.timer.start(2000)  # Update every 2 seconds
 
-        if show_detailed:
-            # Detailed information
-            memory_info = psutil.virtual_memory()
-            self.total_memory_label = QLabel(f"Total Memory: {memory_info.total / (1024 ** 3):.2f} GB")
-            self.available_memory_label = QLabel("Available Memory: ")
-            self.used_memory_label = QLabel("Used Memory: ")
-            self.percent_memory_label = QLabel("Memory Percentage Used: ")
+        self.setLayout(layout)
 
-            # Add detailed information to the layout
-            details_layout = QVBoxLayout()
-            details_layout.addWidget(self.total_memory_label)
-            details_layout.addWidget(self.available_memory_label)
-            details_layout.addWidget(self.used_memory_label)
-            details_layout.addWidget(self.percent_memory_label)
+    def update_process_info(self):
+        """Update the table with the top 5 memory processes."""
+        # Retrieve all processes with minimal necessary attributes
+        processes = [proc for proc in psutil.process_iter(['pid', 'name', 'memory_percent', 'memory_info'])]
 
-            combined_layout = QHBoxLayout()
-            combined_layout.addLayout(layout)
-            combined_layout.addLayout(details_layout)
+        def safe_get_memory_percent(proc):
+            try:
+                return proc.info['memory_percent'] or 0.0  # Use 0.0 as a fallback if the value is None
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                return 0.0
 
-            self.setLayout(combined_layout)
-        else:
-            # Only graph layout
-            self.setLayout(layout)
+        # Sort processes by memory percentage, using a safe fallback
+        sorted_procs = sorted(processes, key=lambda p: safe_get_memory_percent(p), reverse=True)
 
-    def update_memory(self, data):
-        """Update the Memory graph data and optionally update the details."""
-        self.memory_curve.setData(data)
+        # Clear the table and set the row count for the top 5 processes
+        self.table.setRowCount(min(len(sorted_procs), 5))
 
-        # Update detailed labels only if they're visible
-        try:
-            memory_info = psutil.virtual_memory()
-            self.available_memory_label.setText(f"Available Memory: {memory_info.available / (1024 ** 3):.2f} GB")
-            self.used_memory_label.setText(f"Used Memory: {memory_info.used / (1024 ** 3):.2f} GB")
-            self.percent_memory_label.setText(f"Memory Percentage Used: {memory_info.percent:.2f}%")
-        except AttributeError:
-            pass
+        # Populate the table with the top 5 memory-consuming processes
+        for row, proc in enumerate(sorted_procs[:5]):
+            try:
+                pid = proc.info['pid']
+                name = proc.info['name'] or "Unknown"
+                memory_percent = proc.info['memory_percent'] or 0.0
+                memory_mb = proc.info['memory_info'].rss / (1024 * 1024) if proc.info['memory_info'] else 0.0
+
+                # Fill table cells
+                self.table.setItem(row, 0, QTableWidgetItem(str(pid)))
+                self.table.setItem(row, 1, QTableWidgetItem(name))
+                self.table.setItem(row, 2, QTableWidgetItem(f"{memory_percent:.2f}%"))
+                self.table.setItem(row, 3, QTableWidgetItem(f"{memory_mb:.2f} MB"))
+
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+
