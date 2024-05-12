@@ -1,7 +1,10 @@
-import sys
 import psutil
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QPushButton, QHBoxLayout
 from PyQt5.QtCore import QTimer, QSize
+from PyQt5.QtCore import QSize, Qt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.pyplot as plt
+import psutil
 
 class TopCPUProcessesWidget(QWidget):
     def __init__(self):
@@ -26,9 +29,6 @@ class TopCPUProcessesWidget(QWidget):
         self.timer.timeout.connect(self.update_process_info)
         self.timer.start(2000)  # Update every 2 seconds
         self.setLayout(layout)
-
-
-    
 
         
     def update_process_info(self):
@@ -66,4 +66,54 @@ class TopCPUProcessesWidget(QWidget):
 
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
+
+
+
+class CPUUsagePlotWidget(QWidget):
+    def __init__(self,width,height):
+        super().__init__()
+        self.setMinimumSize(width, height)
+        # Create a figure
+        self.figure, self.ax = plt.subplots(figsize=(5, 3))  # Adjust the figsize as needed
+        self.canvas = FigureCanvas(self.figure)
+
+        # Set the title and labels
+        self.ax.set_title('CPU Usage (%)', fontsize=9,color = '#562680')  # Set font size for the title
+
+        # Initialize empty data
+        self.times = []
+        self.cpu_usages = []
+
+        # Set up a timer to update the plot every second
+        self.timer = self.startTimer(1000)
+
+        # Add canvas to layout
+        layout = QVBoxLayout()
+        layout.addWidget(self.canvas)
+        self.setLayout(layout)
+        layout.setAlignment(Qt.AlignCenter)
+
+    def timerEvent(self, event):
+        # Get current CPU usage
+        cpu_usage = psutil.cpu_percent()
+
+        # Append the current time and CPU usage to the data lists
+        self.times.append(len(self.times) + 1)
+        self.cpu_usages.append(cpu_usage)
+
+        # Clear previous plot
+        self.ax.clear()
+
+        # Plot CPU usage
+        self.ax.plot(self.times, self.cpu_usages, color='violet')
+
+        # Set title and labels
+        self.ax.set_title('CPU Usage (%)', fontsize=9, color = '#562680')  # Set font size for the title
+
+        # Adjust y-axis to start from the minimum value of CPU usage
+        min_cpu_usage = min(self.cpu_usages)
+        self.ax.set_ylim(bottom=min(0, min_cpu_usage - 5))  # Set the lower limit of y-axis
+
+        # Draw the updated plot
+        self.canvas.draw()
 

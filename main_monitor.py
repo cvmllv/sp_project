@@ -9,10 +9,13 @@ from battery_section import BatteryGraphWidget
 from kill_process_section import KillerApp
 from toggle_switch import ThemeSwitch
 from time_section import DigitalClock
-
-
+from combined_plots import CombinedUsagePlotWidget
+from cpu_section import CPUUsagePlotWidget
+from network_section import NetworkUsagePlotWidget
+from memory_section import MemoryUsagePlotWidget
+from combined_plots import CombinedUsagePlotWidget
 class RectanglePlaceholder(QWidget):
-    """A QWidget subclass to a rectangle placeholder."""
+    """A QWidget subclass to mimic a rectangle placeholder."""
     def __init__(self, width, height, color='#FFFFFF'):
         super().__init__()
         self.setFixedSize(QSize(width, height))
@@ -22,20 +25,22 @@ class RectanglePlaceholder(QWidget):
         palette.setColor(QPalette.Window, QColor(color))
         self.setPalette(palette)
 
+
         # Initialize a layout to organize children inside the rectangle
         self.inner_layout = QVBoxLayout(self)
+                 
+        #self.inner_layout.setContentsMargins(10, 10, 10, 10)
 
         # Set size policy to allow resizing within the layout
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
-
 
 
 class ComplexUILayout(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("System monitoring dashboard")
+        self.setWindowTitle("Complex UI Layout with Rectangles")
+        #self.setStyleSheet("color: purple;")
         self.setMinimumSize(1400, 800)
 
         self.width = 450
@@ -50,7 +55,7 @@ class ComplexUILayout(QWidget):
         # Get the current PC user's username
         username = getpass.getuser()
 
-        """FIRST COLUMN"""
+
         # First column of rectangles
         first_column = QVBoxLayout()
         first_column.setSpacing(10)
@@ -64,7 +69,7 @@ class ComplexUILayout(QWidget):
         welcome_label = QLabel(f"Welcome back, {username}!", self.welcome_rectangle)
         welcome_label.setAlignment(Qt.AlignCenter)
         welcome_label.setFont(QFont('Monaco', 25, QFont.Bold)) 
-        welcome_label.setStyleSheet("font-family: 'Monaco';"
+        welcome_label.setStyleSheet("font-family: 'Arial';"
                 "font-size: 25pt;" 
                 "font-weight: bold;"
                 "color: white;") 
@@ -81,7 +86,6 @@ class ComplexUILayout(QWidget):
         cpu_rectangle.inner_layout.addWidget(cpu_label)
         cpu_rectangle.inner_layout.addWidget(cpu_table)
         first_column.addWidget(cpu_rectangle)
-
         network_rectangle = RectanglePlaceholder(self.width, 235 + self.height)
         network_usage_label = QLabel("Network Usage", network_rectangle)
         #network_usage_label.setStyleSheet("color: purple;")
@@ -91,15 +95,11 @@ class ComplexUILayout(QWidget):
         network_rectangle.inner_layout.addWidget(network_process_table)
         network_rectangle.inner_layout.addWidget(network_usage_table)
         first_column.addWidget(network_rectangle)
-
-        """SECOND COLUMN"""
-
         # Second column of rectangles
         second_column = QVBoxLayout()
         second_column.setSpacing(10)
         right_stack_hbox = QHBoxLayout()
         right_stack_hbox.setSpacing(10)
-
         self.theme_switch = ThemeSwitch()
 
         right_stack_hbox.addWidget(self.theme_switch, 0, Qt.AlignCenter)
@@ -110,6 +110,14 @@ class ComplexUILayout(QWidget):
         right_stack_hbox.addWidget(clock_widget)
         second_column.addLayout(right_stack_hbox)
 
+        kill_process_rectangle = RectanglePlaceholder(self.width, 155)
+        kill_process_label = QLabel("Enter the process you want to kill", kill_process_rectangle)
+        kill_process = KillerApp()
+        kill_process_rectangle.inner_layout.addWidget(kill_process_label)
+        kill_process_rectangle.inner_layout.addWidget(kill_process)
+        second_column.addWidget(kill_process_rectangle)
+
+
         memory_rectangle = RectanglePlaceholder(self.width, 145 + self.height)
         memory_label = QLabel("Memory Usage", memory_rectangle)
         memory_table = TopMemoryProcessesWidget()
@@ -117,9 +125,10 @@ class ComplexUILayout(QWidget):
         memory_rectangle.inner_layout.addWidget(memory_table)
         second_column.addWidget(memory_rectangle)
 
-        battery_rectangle = RectanglePlaceholder(self.width, 235 + self.height)
+        battery_rectangle = RectanglePlaceholder(self.width, 145 + self.height)
         battery_label = QLabel("Battery Usage", battery_rectangle)
-        battery_graph = BatteryGraphWidget()
+        #battery_label.setStyleSheet("color: purple;")
+        battery_graph = BatteryGraphWidget(self.width,115+self.height)
         battery_rectangle.inner_layout.addWidget(battery_label)
         battery_rectangle.inner_layout.addWidget(battery_graph)
         second_column.addWidget(battery_rectangle)
@@ -127,17 +136,29 @@ class ComplexUILayout(QWidget):
         # Third column of rectangles
         third_column = QVBoxLayout()
         third_column.setSpacing(10)
+       
+        cpu_graph = RectanglePlaceholder(self.width,760,'#FFFFFF')
+       
+        cpu_plot = CPUUsagePlotWidget(self.width,115+self.height)
+        # Add the plots to the layout within the rectangle
+        cpu_graph.inner_layout.addWidget(cpu_plot)
+        # Add the plot rectangle to the third column
+        #third_column.addWidget(cpu_graph)
+       # plot_label.setMargin(5)
+        plots = CombinedUsagePlotWidget()
+        memory_plot = MemoryUsagePlotWidget(self.width,115+self.height)
+        network_plot = NetworkUsagePlotWidget(self.width,115+self.height)
+        # Add the plots to the layout within the rectangl
+        
+        cpu_graph.inner_layout.addWidget(memory_plot)
+        #cpu_graph.inner_layout.addWidget(QLabel("Network Usage", cpu_graph, alignment=Qt.AlignCenter))
+        cpu_graph.inner_layout.addWidget(network_plot)
+
+        # Add the plot rectangle to the third column
+        third_column.addWidget(cpu_graph)
+
         
 
-        third_column.addWidget(RectanglePlaceholder(self.width, 500))
-        kill_process_rectangle = RectanglePlaceholder(self.width, 145 + self.height)
-        kill_process_label = QLabel("Enter the process you want to kill", kill_process_rectangle)
-        #kill_process_label.setStyleSheet("color: purple;")
-        kill_process = KillerApp()
-        kill_process_rectangle.inner_layout.addWidget(kill_process_label)
-        kill_process_rectangle.inner_layout.addWidget(kill_process)
-        third_column.addWidget(kill_process_rectangle)
-        
         # Add all columns to the grid layout
         main_layout.addLayout(first_column, 0, 0)
         main_layout.addLayout(second_column, 0, 1)
@@ -160,8 +181,7 @@ class ComplexUILayout(QWidget):
             self.welcome_rectangle.setStyleSheet("background-color: #562680;"
                                         "border-radius: 10px;"
                                         "color: white")
-            
-
+  
 
     def dark_theme(self):
         self.setStyleSheet("""
@@ -206,6 +226,15 @@ class ComplexUILayout(QWidget):
                 font-size: 14pt; 
                 font-weight: bold;
                 color: #E7D5F6;
+            }
+            QLineEdit {
+                border: 1px solid #D9D9D9;
+                border-radius: 10px;
+                padding: 0 8px;
+                background: #3E3E3E;
+                selection-background-color: darkgray;
+                font-size: 16pt;
+                color: #555;         
             }
 
         """)

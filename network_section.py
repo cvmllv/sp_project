@@ -2,6 +2,11 @@ import sys
 import psutil
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QGridLayout
 from PyQt5.QtCore import QTimer, QSize
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.pyplot as plt
+import psutil
+import matplotlib.ticker as ticker
 
 class TopNetworkProcessesWidget(QWidget):
     def __init__(self):
@@ -134,3 +139,49 @@ class NetworkMonitorWidget(QWidget):
         self.previous_stats = current_stats
         self.previous_time = current_time
 
+class NetworkUsagePlotWidget(QWidget):
+    def __init__(self,width,height):
+        super().__init__()
+        self.setMinimumSize(width, height)
+        # Create a figure
+        self.figure, self.ax = plt.subplots(figsize=(5, 3))  # Adjust the figsize as needed
+        self.canvas = FigureCanvas(self.figure)
+
+        # Set the title and labels with smaller font size
+        self.ax.set_title('Network Usage (KB)', fontsize=9, color = '#562680')   # Set font size for the title
+        #self.ax.set_xlabel('Time (s)', fontsize=9)        # Set font size for the x-label
+        #self.ax.set_ylabel('Usage (KB)', fontsize=9)       # Set font size for the y-label
+        # Initialize empty data
+        self.times = []
+        self.network_usages = []
+
+        # Set up a timer to update the plot every second
+        self.timer = self.startTimer(1000)
+
+        # Add canvas to layout
+        layout = QVBoxLayout()
+        layout.addWidget(self.canvas)
+        self.setLayout(layout)
+
+    def timerEvent(self, event):
+        # Get current network usage
+        network_usage = psutil.net_io_counters().bytes_sent + psutil.net_io_counters().bytes_recv
+
+        # Convert network usage to kilobytes
+        network_usage_kb = network_usage / 1024
+
+        # Append the current time and network usage to the data lists
+        self.times.append(len(self.times) + 1)
+        self.network_usages.append(network_usage_kb)
+
+        # Clear previous plot
+        self.ax.clear()
+
+        # Plot network usage
+        self.ax.plot(self.times, self.network_usages, color='red')
+
+        # Set title and labels
+        self.ax.set_title('Network Usage (KB)', fontsize=9, color = '#562680')    # Set font size for the title
+
+        # Draw the updated plot
+        self.canvas.draw()
