@@ -7,7 +7,7 @@ class TopCPUProcessesWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Top 5 CPU Processes")
-        #self.setFixedSize(QSize(450, 200))
+        self.setFixedSize(QSize(450, 245))
 
         # Layout and label
         layout = QVBoxLayout()
@@ -17,7 +17,7 @@ class TopCPUProcessesWidget(QWidget):
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["PID", "Name", "% CPU", "Threads"])
         self.table.verticalHeader().setVisible(False)
-        
+
         layout.addWidget(self.table)
 
         # Update the process table periodically
@@ -26,6 +26,8 @@ class TopCPUProcessesWidget(QWidget):
         self.timer.timeout.connect(self.update_process_info)
         self.timer.start(2000)  # Update every 2 seconds
         self.setLayout(layout)
+
+
     
 
 

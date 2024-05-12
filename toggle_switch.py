@@ -24,7 +24,7 @@ class ThemeSwitch(QWidget):
         self.toggle_button.setStyleSheet("QPushButton {"
                                          "border: none;"
                                          "background-color: white;"
-                                         "border-radius: 20px;"
+                                         "border-radius: 16px;"
                                          "}")  # Ensure button has no border or unwanted background
         self.toggle_button.move(5, 5)  # Initial position
         self.toggle_button.setIcon(self.sun_icon)
@@ -47,7 +47,7 @@ class ThemeSwitch(QWidget):
         self.toggle_button.setStyleSheet("QPushButton {"
                                          "border: none;"
                                          "background-color: #3E3E3E;"
-                                         "border-radius: 20px;"
+                                         "border-radius: 16px;"
                                          "}")
         self.toggle_button.setIcon(self.moon_icon)
     
@@ -57,7 +57,7 @@ class ThemeSwitch(QWidget):
         self.toggle_button.setStyleSheet("QPushButton {"
                                          "border: none;"
                                          "background-color: white;"
-                                         "border-radius: 20px;"
+                                         "border-radius: 16px;"
                                          "}")
         self.toggle_button.setIcon(self.sun_icon)
         
@@ -69,7 +69,7 @@ class ThemeSwitch(QWidget):
             self.toggle_button.move(self.toggle_button.x() + step, 5)
             self.dark_theme()
             
-        elif not self.checked and self.toggle_button.x() > 10:
+        elif not self.checked and self.toggle_button.x() > 5:
             self.toggle_button.move(self.toggle_button.x() - step, 5)
             self.light_theme()
         else:
@@ -83,10 +83,10 @@ class ThemeSwitch(QWidget):
 
         painter.setPen(Qt.NoPen)
         # Draw the container
-        background_color = QColor("#646464") if self.checked else QColor("#FCF8FF")
+        background_color = QColor("#646464") if self.checked else QColor("#DFD6E7")
         painter.setBrush(QBrush(background_color))
 
-        painter.drawRoundedRect(0, 0, self.width(), self.height(), 25, 25)
+        painter.drawRoundedRect(0, 0, self.width(), self.height(), 18, 18)
 
         painter.drawPixmap(15, 15, self.sun_icon.pixmap(17, 17))
         painter.drawPixmap(65, 15, self.moon_icon.pixmap(17, 17))

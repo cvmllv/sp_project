@@ -29,6 +29,7 @@ class KillerApp(QWidget):
         self.setLayout(layout)
         self.setWindowTitle('Process Killer')
 
+
     def killProcess(self):
         pid = self.pidInput.text()
         try:
