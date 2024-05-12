@@ -181,6 +181,7 @@ class ComplexUILayout(QWidget):
             self.welcome_rectangle.setStyleSheet("background-color: #562680;"
                                         "border-radius: 10px;"
                                         "color: white")
+            
   
 
     def dark_theme(self):

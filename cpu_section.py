@@ -4,7 +4,8 @@ from PyQt5.QtCore import QTimer, QSize
 from PyQt5.QtCore import QSize, Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
-import psutil
+import collections
+
 
 class TopCPUProcessesWidget(QWidget):
     def __init__(self):
@@ -70,50 +71,53 @@ class TopCPUProcessesWidget(QWidget):
 
 
 class CPUUsagePlotWidget(QWidget):
-    def __init__(self,width,height):
+    def __init__(self, width, height):
         super().__init__()
         self.setMinimumSize(width, height)
-        # Create a figure
-        self.figure, self.ax = plt.subplots(figsize=(5, 3))  # Adjust the figsize as needed
+
+        # Create a figure and set initial plot properties
+        self.figure, self.ax = plt.subplots(figsize=(5, 3))
         self.canvas = FigureCanvas(self.figure)
+        self.ax.set_title('CPU Usage (%)', fontsize=9, color='#562680')
 
-        # Set the title and labels
-        self.ax.set_title('CPU Usage (%)', fontsize=9,color = '#562680')  # Set font size for the title
-
-        # Initialize empty data
-        self.times = []
-        self.cpu_usages = []
+        # Initialize data storage with a fixed window size of 60 seconds
+        self.times = collections.deque(maxlen=60)  # Time in seconds
+        self.cpu_usages = collections.deque(maxlen=60)  # CPU usages in percent
 
         # Set up a timer to update the plot every second
         self.timer = self.startTimer(1000)
 
-        # Add canvas to layout
+        # Layout settings
         layout = QVBoxLayout()
         layout.addWidget(self.canvas)
         self.setLayout(layout)
         layout.setAlignment(Qt.AlignCenter)
 
+class CPUUsagePlotWidget(QWidget):
+    def __init__(self, width, height):
+        super().__init__()
+        self.setMinimumSize(width, height)
+        self.figure, self.ax = plt.subplots(figsize=(5, 3))
+        self.canvas = FigureCanvas(self.figure)
+        self.ax.set_title('CPU Usage (%)', fontsize=9, color='#562680')
+        self.times = collections.deque(maxlen=60)  # Time in seconds
+        self.cpu_usages = collections.deque(maxlen=60)  # CPU usages in percent
+        self.timer = self.startTimer(1000)  # Update every second
+        layout = QVBoxLayout()
+        layout.addWidget(self.canvas)
+        self.setLayout(layout)
+        layout.setAlignment(Qt.AlignCenter)
+        self.start_time = 0  # Start a counter from 0
+
     def timerEvent(self, event):
-        # Get current CPU usage
         cpu_usage = psutil.cpu_percent()
-
-        # Append the current time and CPU usage to the data lists
-        self.times.append(len(self.times) + 1)
+        self.start_time += 1  # Increment the start time
+        self.times.append(self.start_time)
         self.cpu_usages.append(cpu_usage)
-
-        # Clear previous plot
         self.ax.clear()
-
-        # Plot CPU usage
-        self.ax.plot(self.times, self.cpu_usages, color='violet')
-
-        # Set title and labels
-        self.ax.set_title('CPU Usage (%)', fontsize=9, color = '#562680')  # Set font size for the title
-
-        # Adjust y-axis to start from the minimum value of CPU usage
-        min_cpu_usage = min(self.cpu_usages)
-        self.ax.set_ylim(bottom=min(0, min_cpu_usage - 5))  # Set the lower limit of y-axis
-
-        # Draw the updated plot
+        self.ax.plot(list(self.times), list(self.cpu_usages), color='violet')
+        self.ax.set_title('CPU Usage (%)', fontsize=9, color='#562680')
+        self.ax.set_ylim(0, 100)  # Set fixed y-axis for percentage
+        self.ax.xaxis.set_visible(False)
+        #self.ax.set_xlim(max(0, self.start_time - 60), self.start_time)  # Adjust x-axis to show last 60 seconds
         self.canvas.draw()
-
