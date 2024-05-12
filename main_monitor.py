@@ -11,7 +11,7 @@ from toggle_switch import ThemeSwitch
 from time_section import DigitalClock
 
 
-class RectanglePlaceholderWhite(QWidget):
+class RectanglePlaceholder(QWidget):
     """A QWidget subclass to mimic a rectangle placeholder."""
     def __init__(self, width, height, color='#FFFFFF'):
         super().__init__()
@@ -31,6 +31,42 @@ class RectanglePlaceholderWhite(QWidget):
         # Set size policy to allow resizing within the layout
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
+
+
+
+    # def paintEvent(self, event):
+    #     painter = QPainter(self)
+    #     painter.setRenderHint(QPainter.Antialiasing)
+
+    #     # Define the pen and brush for the rectangle
+    #     main_color = QColor('#000000')  # Purple color
+
+    #     # Create pens with slightly offset colors to mimic shadow effect
+    #     shadow_pen1 = QPen(QColor(main_color.red(), main_color.green(), main_color.blue(), 100))
+    #     shadow_pen1.setWidth(5)
+
+    #     shadow_pen2 = QPen(QColor(main_color.red(), main_color.green(), main_color.blue(), 75))
+    #     shadow_pen2.setWidth(5)
+    #     shadow_pen3 = QPen(QColor(main_color.red(), main_color.green(), main_color.blue(), 50))
+    #     shadow_pen3.setWidth(5)
+    #     shadow_pen4 = QPen(QColor(main_color.red(), main_color.green(), main_color.blue(), 25))
+    #     shadow_pen4.setWidth(5)
+    #     #brush = QBrush(QColor('#a9cce3'))  # Light purple color
+
+    #     # Set the pen and brush
+    #     painter.setPen(shadow_pen1)
+    #     painter.setPen(shadow_pen2)
+    #     painter.setPen(shadow_pen3)
+    #     painter.setPen(shadow_pen4)
+        #painter.setBrush(brush)
+
+        # Draw the rectangle
+        #painter.drawRoundedRect(self.rect(), 5, 5)
+
+        # Draw the background color for the label
+       # painter.fillRect(self.rect(), QColor('#FFB6C1'))  # Light blue color
+
+
 class ComplexUILayout(QWidget):
     def __init__(self):
         super().__init__()
@@ -42,6 +78,7 @@ class ComplexUILayout(QWidget):
         self.width = 450
         self.height = 100
 
+        self.light_theme()
 
         # Main layout to hold all sub-layouts
         main_layout = QGridLayout()
@@ -154,6 +191,9 @@ class ComplexUILayout(QWidget):
                                         "color: white")
         else:
             self.light_theme()
+            self.welcome_rectangle.setStyleSheet("background-color: #562680;"
+                                        "border-radius: 10px;"
+                                        "color: white")
             
 
 
