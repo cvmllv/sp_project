@@ -12,7 +12,6 @@ class BatteryGraphWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Real-time Battery Level Graph")
-        self.setMinimumSize(600, 300)
         
         # Initialize layout
         layout = QVBoxLayout()

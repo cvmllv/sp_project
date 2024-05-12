@@ -9,7 +9,6 @@ class TopMemoryProcessesWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Top 5 Memory Processes")
-        
 
         # Layout and label
         layout = QVBoxLayout()
@@ -18,6 +17,7 @@ class TopMemoryProcessesWidget(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["PID", "Name", "Memory %", "Memory (MB)"])
+        self.table.verticalHeader().setVisible(False)
         layout.addWidget(self.table)
 
         # Update the process table periodically

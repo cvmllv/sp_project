@@ -16,6 +16,7 @@ class TopNetworkProcessesWidget(QWidget):
         self.table = QTableWidget()
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["PID", "Name", "Bytes Sent (MB)", "Bytes Received (MB)"])
+        self.table.verticalHeader().setVisible(False)
         layout.addWidget(self.table)
 
         # Update the process info periodically
@@ -25,6 +26,7 @@ class TopNetworkProcessesWidget(QWidget):
         self.timer.start(2000)  # Update every 2 seconds
 
         self.setLayout(layout)
+
 
     def update_process_info(self):
         """Update the table with the top 5 processes by network usage."""
@@ -69,7 +71,6 @@ class NetworkMonitorWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Network Monitor")
-        #self.resize(400, 200)
 
         # Layout
         layout = QGridLayout()

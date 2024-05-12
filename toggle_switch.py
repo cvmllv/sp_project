@@ -4,12 +4,14 @@ from PyQt5.QtGui import QPainter, QColor, QBrush, QFont, QPen, QPixmap, QImage, 
 from PyQt5.QtCore import QRectF, Qt, QTimer, QSize
 
 
+
 class ThemeSwitch(QWidget):
     def __init__(self):
         super().__init__()
+        self.checked = False  # Toggle state 
+        self.toggle_button = QPushButton("", self)
         self.init_ui()
         self.setFixedSize(100, 50)
-        self.checked = False  # Toggle state 
 
     def init_ui(self):
         self.setWindowTitle('Advanced Theme Switch')
@@ -18,7 +20,6 @@ class ThemeSwitch(QWidget):
         self.moon_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/moon_grey.png"))
         self.sun_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/sun_purple.png")) # Set default background to a neutral color
 
-        self.toggle_button = QPushButton("", self)
         self.toggle_button.setFixedSize(40, 40)
         self.toggle_button.setStyleSheet("QPushButton {"
                                          "border: none;"
@@ -28,14 +29,13 @@ class ThemeSwitch(QWidget):
         self.toggle_button.move(5, 5)  # Initial position
         self.toggle_button.setIcon(self.sun_icon)
         self.toggle_button.setIconSize(QSize(20, 20))
-        self.toggle_button.clicked.connect(self.toggle_theme)
 
         self.animation_timer = QTimer(self)
         self.animation_timer.timeout.connect(self.animate_transition)
         self.animation_timer.start(10)
 
-    def toggle(self):
-        return self.checked
+    def toggled(self):
+        self.toggle_button
 
     def toggle_theme(self):
         self.checked = not self.checked
