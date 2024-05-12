@@ -12,7 +12,7 @@ from time_section import DigitalClock
 
 
 class RectanglePlaceholder(QWidget):
-    """A QWidget subclass to mimic a rectangle placeholder."""
+    """A QWidget subclass to a rectangle placeholder."""
     def __init__(self, width, height, color='#FFFFFF'):
         super().__init__()
         self.setFixedSize(QSize(width, height))
@@ -22,11 +22,8 @@ class RectanglePlaceholder(QWidget):
         palette.setColor(QPalette.Window, QColor(color))
         self.setPalette(palette)
 
-
         # Initialize a layout to organize children inside the rectangle
         self.inner_layout = QVBoxLayout(self)
-                 
-        #self.inner_layout.setContentsMargins(10, 10, 10, 10)
 
         # Set size policy to allow resizing within the layout
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -34,45 +31,11 @@ class RectanglePlaceholder(QWidget):
 
 
 
-    # def paintEvent(self, event):
-    #     painter = QPainter(self)
-    #     painter.setRenderHint(QPainter.Antialiasing)
-
-    #     # Define the pen and brush for the rectangle
-    #     main_color = QColor('#000000')  # Purple color
-
-    #     # Create pens with slightly offset colors to mimic shadow effect
-    #     shadow_pen1 = QPen(QColor(main_color.red(), main_color.green(), main_color.blue(), 100))
-    #     shadow_pen1.setWidth(5)
-
-    #     shadow_pen2 = QPen(QColor(main_color.red(), main_color.green(), main_color.blue(), 75))
-    #     shadow_pen2.setWidth(5)
-    #     shadow_pen3 = QPen(QColor(main_color.red(), main_color.green(), main_color.blue(), 50))
-    #     shadow_pen3.setWidth(5)
-    #     shadow_pen4 = QPen(QColor(main_color.red(), main_color.green(), main_color.blue(), 25))
-    #     shadow_pen4.setWidth(5)
-    #     #brush = QBrush(QColor('#a9cce3'))  # Light purple color
-
-    #     # Set the pen and brush
-    #     painter.setPen(shadow_pen1)
-    #     painter.setPen(shadow_pen2)
-    #     painter.setPen(shadow_pen3)
-    #     painter.setPen(shadow_pen4)
-        #painter.setBrush(brush)
-
-        # Draw the rectangle
-        #painter.drawRoundedRect(self.rect(), 5, 5)
-
-        # Draw the background color for the label
-       # painter.fillRect(self.rect(), QColor('#FFB6C1'))  # Light blue color
-
-
 class ComplexUILayout(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Complex UI Layout with Rectangles")
-        #self.setStyleSheet("color: purple;")
+        self.setWindowTitle("System monitoring dashboard")
         self.setMinimumSize(1400, 800)
 
         self.width = 450
@@ -87,7 +50,7 @@ class ComplexUILayout(QWidget):
         # Get the current PC user's username
         username = getpass.getuser()
 
-
+        """FIRST COLUMN"""
         # First column of rectangles
         first_column = QVBoxLayout()
         first_column.setSpacing(10)
@@ -129,6 +92,8 @@ class ComplexUILayout(QWidget):
         network_rectangle.inner_layout.addWidget(network_usage_table)
         first_column.addWidget(network_rectangle)
 
+        """SECOND COLUMN"""
+
         # Second column of rectangles
         second_column = QVBoxLayout()
         second_column.setSpacing(10)
@@ -154,7 +119,6 @@ class ComplexUILayout(QWidget):
 
         battery_rectangle = RectanglePlaceholder(self.width, 235 + self.height)
         battery_label = QLabel("Battery Usage", battery_rectangle)
-        #battery_label.setStyleSheet("color: purple;")
         battery_graph = BatteryGraphWidget()
         battery_rectangle.inner_layout.addWidget(battery_label)
         battery_rectangle.inner_layout.addWidget(battery_graph)
