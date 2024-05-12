@@ -22,7 +22,7 @@ class BatteryGraphWidget(QWidget):
         layout.addWidget(self.canvas)
 
         # Set up the battery graph
-        self.ax_battery.set_title("Battery Level")
+        #self.ax_battery.set_title("Battery Level")
         self.ax_battery.set_ylim([0, 100])
         self.ax_battery.set_ylabel('Battery (%)')
         self.ax_battery.xaxis.set_major_locator(MultipleLocator(3))

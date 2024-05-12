@@ -118,7 +118,16 @@ class ComplexUILayout(QWidget):
         cpu_rectangle.inner_layout.addWidget(cpu_label)
         cpu_rectangle.inner_layout.addWidget(cpu_table)
         first_column.addWidget(cpu_rectangle)
-        first_column.addWidget(RectanglePlaceholder(self.width, 235 + self.height))
+
+        network_rectangle = RectanglePlaceholder(self.width, 235 + self.height)
+        network_usage_label = QLabel("Network Usage", network_rectangle)
+        #network_usage_label.setStyleSheet("color: purple;")
+        network_process_table = TopNetworkProcessesWidget()
+        network_usage_table = NetworkMonitorWidget()
+        network_rectangle.inner_layout.addWidget(network_usage_label)
+        network_rectangle.inner_layout.addWidget(network_process_table)
+        network_rectangle.inner_layout.addWidget(network_usage_table)
+        first_column.addWidget(network_rectangle)
 
         # Second column of rectangles
         second_column = QVBoxLayout()
@@ -143,27 +152,20 @@ class ComplexUILayout(QWidget):
         memory_rectangle.inner_layout.addWidget(memory_table)
         second_column.addWidget(memory_rectangle)
 
-        network_rectangle = RectanglePlaceholder(self.width, 235 + self.height)
-        network_usage_label = QLabel("Network Usage", network_rectangle)
-        #network_usage_label.setStyleSheet("color: purple;")
-        network_process_table = TopNetworkProcessesWidget()
-        network_usage_table = NetworkMonitorWidget()
-        network_rectangle.inner_layout.addWidget(network_usage_label)
-        network_rectangle.inner_layout.addWidget(network_process_table)
-        network_rectangle.inner_layout.addWidget(network_usage_table)
-        second_column.addWidget(network_rectangle)
-
-        # Third column of rectangles
-        third_column = QVBoxLayout()
-        third_column.setSpacing(10)
-        battery_rectangle = RectanglePlaceholder(self.width, 145 + self.height)
+        battery_rectangle = RectanglePlaceholder(self.width, 235 + self.height)
         battery_label = QLabel("Battery Usage", battery_rectangle)
         #battery_label.setStyleSheet("color: purple;")
         battery_graph = BatteryGraphWidget()
         battery_rectangle.inner_layout.addWidget(battery_label)
         battery_rectangle.inner_layout.addWidget(battery_graph)
-        third_column.addWidget(battery_rectangle)
-        third_column.addWidget(RectanglePlaceholder(self.width, 145 + self.height))
+        second_column.addWidget(battery_rectangle)
+
+        # Third column of rectangles
+        third_column = QVBoxLayout()
+        third_column.setSpacing(10)
+        
+
+        third_column.addWidget(RectanglePlaceholder(self.width, 500))
         kill_process_rectangle = RectanglePlaceholder(self.width, 145 + self.height)
         kill_process_label = QLabel("Enter the process you want to kill", kill_process_rectangle)
         #kill_process_label.setStyleSheet("color: purple;")
@@ -205,6 +207,7 @@ class ComplexUILayout(QWidget):
             QPushButton {
                 background-color: #555555;
                 color: white;
+                border-radius: 14px;
             }
             QTableWidget {
                 background-color: transparent;
@@ -290,6 +293,15 @@ class ComplexUILayout(QWidget):
                 font-size: 14pt; 
                 font-weight: bold;
                 color: #562680;
+            }
+            QLineEdit {
+                border: 1px solid #D9D9D9;
+                border-radius: 10px;
+                padding: 0 8px;
+                background: white;
+                selection-background-color: darkgray;
+                font-size: 16pt;
+                color: #555;         
             }
             """)
 

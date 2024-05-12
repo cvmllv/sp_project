@@ -52,8 +52,8 @@ class ThemeSwitch(QWidget):
         self.toggle_button.setIcon(self.moon_icon)
     
     def light_theme(self):
-        self.moon_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/moon_grey.png"))
-        self.sun_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/sun_purple.png"))
+        self.moon_icon = QIcon(QPixmap("/assets/moon_grey.png"))
+        self.sun_icon = QIcon(QPixmap("/assets/sun_purple.png"))
         self.toggle_button.setStyleSheet("QPushButton {"
                                          "border: none;"
                                          "background-color: white;"

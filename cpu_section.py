@@ -30,7 +30,6 @@ class TopCPUProcessesWidget(QWidget):
 
     
 
-
         
     def update_process_info(self):
         """Update the table with the top 5 CPU processes."""
