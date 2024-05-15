@@ -45,7 +45,7 @@ class ThemeSwitch(QWidget):
         self.moon_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/moon_purple.png"))
         self.sun_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/sun_grey.png"))
         self.toggle_button.setStyleSheet("QPushButton {"
-                                         "border: none;"
+                                         "border: none;"  
                                          "background-color: #3E3E3E;"
                                          "border-radius: 16px;"
                                          "}")

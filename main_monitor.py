@@ -14,6 +14,7 @@ from cpu_section import CPUUsagePlotWidget
 from network_section import NetworkUsagePlotWidget
 from memory_section import MemoryUsagePlotWidget
 from combined_plots import CombinedUsagePlotWidget
+
 class RectanglePlaceholder(QWidget):
     """A QWidget subclass to mimic a rectangle placeholder."""
     def __init__(self, width, height, color='#FFFFFF'):
@@ -39,7 +40,7 @@ class ComplexUILayout(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Complex UI Layout with Rectangles")
+        self.setWindowTitle("System Monitoring Dashboard")
         #self.setStyleSheet("color: purple;")
         self.setMinimumSize(1400, 800)
 

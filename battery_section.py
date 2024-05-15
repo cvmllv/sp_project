@@ -55,7 +55,7 @@ class BatteryGraphWidget(QWidget):
                 self.battery_data = self.battery_data[-24:]
 
             self.ax_battery.clear()
-            self.ax_battery.plot(self.time_series, self.battery_data, color='purple', marker='o')
+            self.ax_battery.plot(self.time_series, self.battery_data, color='purple')
             self.ax_battery.set_ylim([0, 100])
             self.ax_battery.set_ylabel('Battery (%)',fontsize=8,c='purple')
             self.ax_battery.xaxis.set_major_formatter(DateFormatter('%H:%M'))
