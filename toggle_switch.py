@@ -61,7 +61,6 @@ class ThemeSwitch(QWidget):
                                          "}")
         self.toggle_button.setIcon(self.sun_icon)
         
-
     def animate_transition(self):
         step = 5  # Control the speed of the animation
         max_position = 55  # End position for the toggle
@@ -75,7 +74,6 @@ class ThemeSwitch(QWidget):
         else:
             self.animation_timer.stop()  # Stop the timer when the end position is reached
         self.update()  # Request a repaint
-
 
     def paintEvent(self, event):
         painter = QPainter(self)

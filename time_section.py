@@ -33,10 +33,3 @@ class DigitalClock(QWidget):
         # Set the formatted time on the label
         self.timeLabel.setText(formattedTime)
 
-if __name__ == "__main__":
-    import sys
-    app = QApplication(sys.argv)
-    clock = DigitalClock()
-    clock.setWindowTitle('Digital Clock')
-    clock.show()
-    sys.exit(app.exec_())
