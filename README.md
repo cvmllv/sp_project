@@ -34,8 +34,8 @@ The only interaction you can do is change theme and kill process.
 
 Light theme
 
-![Screenshot 2024-07-14 at 22.35.01.png](System%20Monitoring%20Dashboard%2074bf94c028584dc794bb848b4132f789/Screenshot_2024-07-14_at_22.35.01.png)
+![Screenshot 2024-07-14 at 22.35.01.png](System%20Monitoring%20Dashboard/Screenshot_2024-07-14_at_22.35.01.png)
 
 Dark theme
 
-![Screenshot 2024-07-14 at 23.37.19.png](System%20Monitoring%20Dashboard%2074bf94c028584dc794bb848b4132f789/Screenshot_2024-07-14_at_23.37.19.png)
+![Screenshot 2024-07-14 at 23.37.19.png](System%20Monitoring%20Dashboard/Screenshot_2024-07-14_at_23.37.19.png)
