@@ -1,4 +1,3 @@
-import sys
 import psutil
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QGridLayout
 from PyQt5.QtCore import QTimer, QSize
@@ -6,7 +5,6 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import psutil
-import matplotlib.ticker as ticker
 import collections
 
 class TopNetworkProcessesWidget(QWidget):

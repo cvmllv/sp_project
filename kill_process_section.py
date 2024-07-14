@@ -1,4 +1,3 @@
-import sys
 import os
 import signal
 from PyQt5.QtWidgets import (QApplication, QWidget, QLineEdit, QPushButton, QVBoxLayout,

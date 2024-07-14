@@ -1,5 +1,4 @@
 import os
-import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt5.QtGui import QPainter, QColor, QBrush, QFont, QPen, QPixmap, QImage, QIcon
 from PyQt5.QtCore import QRectF, Qt, QTimer, QSize

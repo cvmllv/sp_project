@@ -1,4 +1,3 @@
-import sys
 import psutil
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel, QSizePolicy

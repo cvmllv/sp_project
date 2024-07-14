@@ -1,4 +1,3 @@
-import sys
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
