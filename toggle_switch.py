@@ -1,9 +1,8 @@
+import os
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt5.QtGui import QPainter, QColor, QBrush, QFont, QPen, QPixmap, QImage, QIcon
 from PyQt5.QtCore import QRectF, Qt, QTimer, QSize
-
-
 
 class ThemeSwitch(QWidget):
     def __init__(self):
@@ -15,10 +14,16 @@ class ThemeSwitch(QWidget):
 
     def init_ui(self):
         self.setWindowTitle('Advanced Theme Switch')
-        self.setStyleSheet("background-color: white;") 
+        self.setStyleSheet("background-color: white;")
         
-        self.moon_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/moon_grey.png"))
-        self.sun_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/sun_purple.png")) # Set default background to a neutral color
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        moon_grey_path = os.path.join(current_dir, 'assets', 'moon_grey.png')
+        sun_purple_path = os.path.join(current_dir, 'assets', 'sun_purple.png')
+        moon_purple_path = os.path.join(current_dir, 'assets', 'moon_purple.png')
+        sun_grey_path = os.path.join(current_dir, 'assets', 'sun_grey.png')
+
+        self.moon_icon = QIcon(QPixmap(moon_grey_path))
+        self.sun_icon = QIcon(QPixmap(sun_purple_path)) 
 
         self.toggle_button.setFixedSize(40, 40)
         self.toggle_button.setStyleSheet("QPushButton {"
@@ -42,8 +47,12 @@ class ThemeSwitch(QWidget):
         self.animation_timer.start(10)  # Start or restart the animation timer
 
     def dark_theme(self):
-        self.moon_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/moon_purple.png"))
-        self.sun_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/sun_grey.png"))
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        moon_purple_path = os.path.join(current_dir, 'assets', 'moon_purple.png')
+        sun_grey_path = os.path.join(current_dir, 'assets', 'sun_grey.png')
+
+        self.moon_icon = QIcon(QPixmap(moon_purple_path))
+        self.sun_icon = QIcon(QPixmap(sun_grey_path))
         self.toggle_button.setStyleSheet("QPushButton {"
                                          "border: none;"  
                                          "background-color: #3E3E3E;"
@@ -52,8 +61,12 @@ class ThemeSwitch(QWidget):
         self.toggle_button.setIcon(self.moon_icon)
     
     def light_theme(self):
-        self.moon_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/moon_grey.png"))
-        self.sun_icon = QIcon(QPixmap("/Users/kamilla/Desktop/ML/sp_project/assets/sun_purple.png"))
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        moon_grey_path = os.path.join(current_dir, 'assets', 'moon_grey.png')
+        sun_purple_path = os.path.join(current_dir, 'assets', 'sun_purple.png')
+
+        self.moon_icon = QIcon(QPixmap(moon_grey_path))
+        self.sun_icon = QIcon(QPixmap(sun_purple_path))
         self.toggle_button.setStyleSheet("QPushButton {"
                                          "border: none;"
                                          "background-color: white;"
@@ -88,5 +101,3 @@ class ThemeSwitch(QWidget):
 
         painter.drawPixmap(15, 15, self.sun_icon.pixmap(17, 17))
         painter.drawPixmap(65, 15, self.moon_icon.pixmap(17, 17))
-
-
